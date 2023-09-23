@@ -9,6 +9,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -77,11 +78,13 @@ fun firebaseUI(context: android.content.Context) {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .fillMaxWidth()
             .background(Color.White)
     ) {
         TextField(
             value = name.value,
             onValueChange = { name.value = it },
+            modifier = Modifier.fillMaxWidth(),
             label = { Text("Enter your name: ") }
         )
 
@@ -90,6 +93,7 @@ fun firebaseUI(context: android.content.Context) {
         TextField(
             value = branch.value,
             onValueChange = { branch.value = it },
+            modifier = Modifier.fillMaxWidth(),
             label = { Text("Enter your branch: ") }
         )
 
@@ -98,6 +102,7 @@ fun firebaseUI(context: android.content.Context) {
         TextField(
             value = skill.value,
             onValueChange = { skill.value = it },
+            modifier = Modifier.fillMaxWidth(),
             label = { Text("Enter your skill: ") }
         )
 
@@ -127,14 +132,8 @@ fun addToFirebase(
 ) {
     val db: FirebaseFirestore = FirebaseFirestore.getInstance()
 
-    /*val user = hashMapOf(
-        "name" to name,
-        "branch" to branch,
-        "skill" to skill
-    )*/
     val dbUser: CollectionReference = db.collection("users")
     val users = User(name, branch, skill)
-
 
         dbUser.add(users)
         .addOnSuccessListener { documentReference ->
