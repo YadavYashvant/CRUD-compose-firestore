@@ -37,7 +37,10 @@ import com.example.crud_compose_firestore.ui.theme.CRUDcomposefirestoreTheme
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 
+var userList = mutableListOf<User?>()
 class MainActivity : ComponentActivity() {
+
+
     @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +54,9 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Scaffold(
                         topBar = {
-                            Text(text = "CRUD Compose Firestore", modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                            Text(text = "CRUD Compose Firestore", modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth(),
                                 textAlign = TextAlign.Center,
                                 fontSize = 25.sp,
                                 fontWeight = FontWeight.Bold
@@ -94,7 +99,10 @@ fun firebaseUI(context: android.content.Context) {
             value = name.value,
             shape = MaterialTheme.shapes.large,
             onValueChange = { name.value = it },
-            modifier = Modifier.fillMaxWidth().padding(top = 32.dp).height(70.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 32.dp)
+                .height(70.dp),
             colors = TextFieldDefaults.textFieldColors(
                 unfocusedIndicatorColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent
@@ -108,7 +116,9 @@ fun firebaseUI(context: android.content.Context) {
             value = branch.value,
             onValueChange = { branch.value = it },
             shape = MaterialTheme.shapes.large,
-            modifier = Modifier.fillMaxWidth().height(70.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(70.dp),
             colors = TextFieldDefaults.textFieldColors(
                 unfocusedIndicatorColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent
@@ -122,7 +132,9 @@ fun firebaseUI(context: android.content.Context) {
             value = skill.value,
             onValueChange = { skill.value = it },
             shape = MaterialTheme.shapes.large,
-            modifier = Modifier.fillMaxWidth().height(70.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(70.dp),
             colors = TextFieldDefaults.textFieldColors(
                 unfocusedIndicatorColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent
@@ -138,12 +150,21 @@ fun firebaseUI(context: android.content.Context) {
                 addToFirebase(name.value,
                     branch.value,
                     skill.value,
-                    context)
+                    context
+                )
             },
-            modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp, horizontal = 32.dp).height(70.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 32.dp, horizontal = 32.dp)
+                .height(70.dp)
         ) {
             Text(text = "Add User", fontSize = 18.sp)
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = "Reading from Firebase",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold)
     }
 
 
@@ -160,11 +181,43 @@ fun addToFirebase(
     val dbUser: CollectionReference = db.collection("users")
     val users = User(name, branch, skill)
 
-        dbUser.add(users)
+    dbUser.add(users)
         .addOnSuccessListener { documentReference ->
-            android.widget.Toast.makeText(context, "User added successfully", android.widget.Toast.LENGTH_SHORT).show()
+            android.widget.Toast.makeText(
+                context,
+                "User added successfully",
+                android.widget.Toast.LENGTH_SHORT
+            ).show()
         }
         .addOnFailureListener { e ->
-            android.widget.Toast.makeText(context, "Error adding user", android.widget.Toast.LENGTH_SHORT).show()
+            android.widget.Toast.makeText(
+                context,
+                "Error adding user",
+                android.widget.Toast.LENGTH_SHORT
+            ).show()
+        }
+
+}
+
+fun readFromFirebase() {
+
+    var db: FirebaseFirestore = FirebaseFirestore.getInstance()
+
+    db.collection("users")
+        .get()
+        .addOnSuccessListener { result ->
+
+            val list = result.documents
+            for(d in list){
+                val u = d.toObject(User::class.java)
+                userList.add(u)
+            }
+
+            /*for (document in result) {
+                android.util.Log.d("TAG", "${document.id} => ${document.data}")
+            }*/
+        }
+        .addOnFailureListener { exception ->
+            android.util.Log.w("TAG", "Error getting documents.", exception)
         }
 }
