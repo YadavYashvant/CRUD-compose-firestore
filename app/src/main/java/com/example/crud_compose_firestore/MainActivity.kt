@@ -41,8 +41,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -50,6 +52,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -73,28 +78,42 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             CRUDcomposefirestoreTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
 
-                    val navController = rememberNavController()
+                /*val context = LocalContext.current
+                val view = LocalView.current
 
-                    Scaffold(
+                // Set the status bar color to transparent
+                WindowCompat.setDecorFitsSystemWindows(window, false)
+                WindowInsetsControllerCompat(window, view.rootView).run {
+                    isAppearanceLightStatusBars = true
+                    systemBarsBehavior =
+                        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                    hide(WindowInsetsCompat.Type.statusBars())*/
+                    Surface(
 
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
                     ) {
 
-                        NavHost(navController = navController, startDestination = "home") {
-                            composable("home") {
-                                firebaseUI(context = LocalContext.current, navController = navController)
-                            }
+                        val navController = rememberNavController()
 
-                            readFromFirebase()
+                        Scaffold(
+                        ) {
 
-                            composable("read") {
+                            NavHost(navController = navController, startDestination = "home") {
+                                composable("home") {
+                                    firebaseUI(
+                                        context = LocalContext.current,
+                                        navController = navController
+                                    )
+                                }
 
-                                ReadScreen(navController = navController)
+                                readFromFirebase()
+
+                                composable("read") {
+
+                                    ReadScreen(navController = navController)
+                                }
                             }
                         }
                     }
@@ -102,109 +121,121 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun firebaseUI(context: android.content.Context, navController: NavController? = null) {
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun firebaseUI(context: android.content.Context, navController: NavController? = null) {
 
-    val name = remember{
-        mutableStateOf("")
-    }
+        val name = remember {
+            mutableStateOf("")
+        }
 
-    val branch = remember{
-        mutableStateOf("")
-    }
+        val branch = remember {
+            mutableStateOf("")
+        }
 
-    val skill = remember{
-        mutableStateOf("")
-    }
+        val skill = remember {
+            mutableStateOf("")
+        }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = 32.dp, horizontal = 16.dp)
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        TextField(
-            value = name.value,
-            shape = MaterialTheme.shapes.large,
-            onValueChange = { name.value = it },
+        Column(
             modifier = Modifier
+                .fillMaxSize()
+                .padding(vertical = 32.dp, horizontal = 16.dp)
                 .fillMaxWidth()
-                .padding(top = 32.dp)
-                .height(70.dp),
-            colors = TextFieldDefaults.textFieldColors(
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent
-            ),
-            label = { Text("Enter your name ", fontFamily = spacefamily) }
-        )
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            TextField(
+                value = name.value,
+                shape = MaterialTheme.shapes.large,
+                onValueChange = { name.value = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 32.dp)
+                    .height(70.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent
+                ),
+                label = { Text("Enter your name ", fontFamily = spacefamily) }
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        TextField(
-            value = branch.value,
-            onValueChange = { branch.value = it },
-            shape = MaterialTheme.shapes.large,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(70.dp),
-            colors = TextFieldDefaults.textFieldColors(
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent
-            ),
-            label = { Text("Enter your branch ", fontFamily = spacefamily) }
-        )
+            TextField(
+                value = branch.value,
+                onValueChange = { branch.value = it },
+                shape = MaterialTheme.shapes.large,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(70.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent
+                ),
+                label = { Text("Enter your branch ", fontFamily = spacefamily) }
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        TextField(
-            value = skill.value,
-            onValueChange = { skill.value = it },
-            shape = MaterialTheme.shapes.large,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(70.dp),
-            colors = TextFieldDefaults.textFieldColors(
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent
-            ),
-            label = { Text("Enter your skill ", fontFamily = spacefamily) }
-        )
+            TextField(
+                value = skill.value,
+                onValueChange = { skill.value = it },
+                shape = MaterialTheme.shapes.large,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(210.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent
+                ),
+                label = { Text("Enter your skills ", fontFamily = spacefamily) }
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
-            onClick = {
-                /*val user = User(name.value, branch.value, skill.value)*/
-                addToFirebase(name.value,
-                    branch.value,
-                    skill.value,
-                    context
+            Button(
+                onClick = {
+                    /*val user = User(name.value, branch.value, skill.value)*/
+                    addToFirebase(
+                        name.value,
+                        branch.value,
+                        skill.value,
+                        context
+                    )
+                    readFromFirebase()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 32.dp, horizontal = 32.dp)
+                    .height(70.dp)
+            ) {
+                Text(
+                    text = "Add User",
+                    fontSize = 18.sp,
+                    fontFamily = spacefamily,
+                    fontWeight = FontWeight.Bold
                 )
-                readFromFirebase()
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 32.dp, horizontal = 32.dp)
-                .height(70.dp)
-        ) {
-            Text(text = "Add User", fontSize = 18.sp, fontFamily = spacefamily, fontWeight = FontWeight.Bold)
-        }
+            }
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedButton(onClick = {
-            navController?.navigate("read")
-        }, modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 16.dp, horizontal = 48.dp)
-            .height(60.dp)
-        ) {
-            Text(text = "See Database", fontSize = 18.sp, fontFamily = spacefamily, fontWeight = FontWeight.Bold)
-        }
+            OutlinedButton(
+                onClick = {
+                    navController?.navigate("read")
+                }, modifier = Modifier
+                    /*.fillMaxWidth()*/
+                    /*.padding(vertical = 8.dp, horizontal = 60.dp)*/
+                    .height(50.dp).width(200.dp)
+                    .align(Alignment.CenterHorizontally)
+            ) {
+                Text(
+                    text = "See Database",
+                    fontSize = 18.sp,
+                    fontFamily = spacefamily,
+                    fontWeight = FontWeight.Bold
+                )
+            }
 
         }
 
@@ -218,100 +249,105 @@ fun firebaseUI(context: android.content.Context, navController: NavController? =
     }
 
 
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun ReadScreen(navController: NavController) {
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ReadScreen(navController: NavController) {
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = 5.dp, horizontal = 25.dp)
-            .fillMaxWidth()
-            .background(Color.White)
-    ) {
-        IconButton(onClick = {
-            navController.navigate("home")
-        },
-            modifier = Modifier.wrapContentSize().align(Alignment.Start)
-        ) {
-            Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back",
-                tint = Color.Black,
-                modifier = Modifier
-                    .padding(0.dp)
-                    .align(Alignment.Start)
-            )
-        }
-
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-        ){
-            itemsIndexed(userList){ index, item ->
+                .padding(top = 32.dp, start = 16.dp, end = 16.dp)
+                .fillMaxWidth()
+                .background(Color.White)
+        ) {
+            IconButton(
+                onClick = {
+                    navController.navigate("home")
+                },
+                modifier = Modifier.wrapContentSize().align(Alignment.Start)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack, contentDescription = "Back",
+                    tint = Color.Black,
+                    modifier = Modifier
+                        .padding(0.dp)
+                        .align(Alignment.Start)
+                )
+            }
 
-                Card(onClick = { /*TODO*/ },
-                    /*elevation = CardDefaults.cardElevation(
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                itemsIndexed(userList) { index, item ->
+
+                    Card(
+                        onClick = { /*TODO*/ },
+                        /*elevation = CardDefaults.cardElevation(
                         defaultElevation = 5.dp
                     ),*/
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 10.dp)
-                ) {
-
-                    val rememberScrollState = rememberScrollState()
-
-                    Column(
-                        Modifier
+                        modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp)
-                            .wrapContentHeight()
+                            .padding(vertical = 10.dp)
                     ) {
-                        Spacer(modifier = Modifier.width(8.dp))
 
-                        userList[index]?.name?.let {
-                            Text(text = it,
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(4.dp)
-                                    .align(Alignment.CenterHorizontally),
-                                fontFamily = spacefamily,
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
+                        val rememberScrollState = rememberScrollState()
 
-                        userList[index]?.branch?.let {
-                            Text(text = it,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(4.dp)
-                                    .align(Alignment.CenterHorizontally),
-                                fontFamily = spacefamily,
-                            )
+                        Column(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                                .wrapContentHeight()
+                        ) {
+                            Spacer(modifier = Modifier.width(8.dp))
+
+                            userList[index]?.name?.let {
+                                Text(
+                                    text = it,
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(4.dp)
+                                        .align(Alignment.CenterHorizontally),
+                                    fontFamily = spacefamily,
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            userList[index]?.branch?.let {
+                                Text(
+                                    text = it,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(4.dp)
+                                        .align(Alignment.CenterHorizontally),
+                                    fontFamily = spacefamily,
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+                            userList[index]?.skill?.let {
+                                Text(
+                                    text = it,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(4.dp)
+                                        .align(Alignment.CenterHorizontally),
+                                    fontFamily = spacefamily,
+                                )
+                            }
                         }
 
-                        Spacer(modifier = Modifier.height(8.dp))
-                        userList[index]?.skill?.let {
-                            Text(text = it,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(4.dp)
-                                    .align(Alignment.CenterHorizontally),
-                                fontFamily = spacefamily,
-                            )
-                        }
                     }
-
                 }
             }
-        }
 
-        /*for (user in userList) {
+            /*for (user in userList) {
             Text(text = "Name: ${user?.name}",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
@@ -336,57 +372,57 @@ fun ReadScreen(navController: NavController) {
             )
         }*/
 
+        }
     }
-}
 
-fun addToFirebase(
-    name: String,
-    branch: String,
-    skill: String,
-    context: Context
-) {
-    val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+    fun addToFirebase(
+        name: String,
+        branch: String,
+        skill: String,
+        context: Context
+    ) {
+        val db: FirebaseFirestore = FirebaseFirestore.getInstance()
 
-    val dbUser: CollectionReference = db.collection("users")
-    val users = User(name, branch, skill)
+        val dbUser: CollectionReference = db.collection("users")
+        val users = User(name, branch, skill)
 
-    dbUser.add(users)
-        .addOnSuccessListener { documentReference ->
-            android.widget.Toast.makeText(
-                context,
-                "User added successfully",
-                android.widget.Toast.LENGTH_SHORT
-            ).show()
-        }
-        .addOnFailureListener { e ->
-            android.widget.Toast.makeText(
-                context,
-                "Error adding user",
-                android.widget.Toast.LENGTH_SHORT
-            ).show()
-        }
-
-}
-
-fun readFromFirebase() {
-
-    var db: FirebaseFirestore = FirebaseFirestore.getInstance()
-
-    db.collection("users")
-        .get()
-        .addOnSuccessListener { result ->
-
-            val list = result.documents
-            for(d in list){
-                val u = d.toObject(User::class.java)
-                userList.add(u)
+        dbUser.add(users)
+            .addOnSuccessListener { documentReference ->
+                android.widget.Toast.makeText(
+                    context,
+                    "User added successfully",
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
+            }
+            .addOnFailureListener { e ->
+                android.widget.Toast.makeText(
+                    context,
+                    "Error adding user",
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
             }
 
-            /*for (document in result) {
+    }
+
+    fun readFromFirebase() {
+
+        var db: FirebaseFirestore = FirebaseFirestore.getInstance()
+
+        db.collection("users")
+            .get()
+            .addOnSuccessListener { result ->
+
+                val list = result.documents
+                for (d in list) {
+                    val u = d.toObject(User::class.java)
+                    userList.add(u)
+                }
+
+                /*for (document in result) {
                 android.util.Log.d("TAG", "${document.id} => ${document.data}")
             }*/
-        }
-        .addOnFailureListener { exception ->
-            android.util.Log.w("TAG", "Error getting documents.", exception)
-        }
+            }
+            .addOnFailureListener { exception ->
+                android.util.Log.w("TAG", "Error getting documents.", exception)
+            }
 }
