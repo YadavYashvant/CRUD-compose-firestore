@@ -12,10 +12,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -23,6 +35,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +43,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,6 +60,10 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 
 var userList = mutableListOf<User?>()
+val spacefamily = FontFamily(
+    Font(R.font.spaceregular, FontWeight.Normal),
+    Font(R.font.spacebold, FontWeight.Bold),
+)
 class MainActivity : ComponentActivity() {
 
 
@@ -61,25 +80,20 @@ class MainActivity : ComponentActivity() {
                 ) {
 
                     val navController = rememberNavController()
-                    Scaffold(
-                        /*topBar = {
-                            Text(text = "CRUD Compose Firestore", modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxWidth(),
-                                textAlign = TextAlign.Center,
-                                fontSize = 25.sp,
-                                fontWeight = FontWeight.Bold
 
-                            )
-                        }*/
+                    Scaffold(
+
                     ) {
 
                         NavHost(navController = navController, startDestination = "home") {
                             composable("home") {
                                 firebaseUI(context = LocalContext.current, navController = navController)
                             }
+
+                            readFromFirebase()
+
                             composable("read") {
-                                readFromFirebase()
+
                                 ReadScreen(navController = navController)
                             }
                         }
@@ -109,9 +123,9 @@ fun firebaseUI(context: android.content.Context, navController: NavController? =
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 48.dp, horizontal = 16.dp)
+            .padding(vertical = 32.dp, horizontal = 16.dp)
             .fillMaxWidth()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         TextField(
             value = name.value,
@@ -125,7 +139,7 @@ fun firebaseUI(context: android.content.Context, navController: NavController? =
                 unfocusedIndicatorColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent
             ),
-            label = { Text("Enter your name ") }
+            label = { Text("Enter your name ", fontFamily = spacefamily) }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -141,7 +155,7 @@ fun firebaseUI(context: android.content.Context, navController: NavController? =
                 unfocusedIndicatorColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent
             ),
-            label = { Text("Enter your branch ") }
+            label = { Text("Enter your branch ", fontFamily = spacefamily) }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -157,26 +171,27 @@ fun firebaseUI(context: android.content.Context, navController: NavController? =
                 unfocusedIndicatorColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent
             ),
-            label = { Text("Enter your skill ") }
+            label = { Text("Enter your skill ", fontFamily = spacefamily) }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = {
-                val user = User(name.value, branch.value, skill.value)
+                /*val user = User(name.value, branch.value, skill.value)*/
                 addToFirebase(name.value,
                     branch.value,
                     skill.value,
                     context
                 )
+                readFromFirebase()
             },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 32.dp, horizontal = 32.dp)
                 .height(70.dp)
         ) {
-            Text(text = "Add User", fontSize = 18.sp)
+            Text(text = "Add User", fontSize = 18.sp, fontFamily = spacefamily, fontWeight = FontWeight.Bold)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -185,10 +200,10 @@ fun firebaseUI(context: android.content.Context, navController: NavController? =
             navController?.navigate("read")
         }, modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 32.dp, horizontal = 32.dp)
-            .height(70.dp)
+            .padding(vertical = 16.dp, horizontal = 48.dp)
+            .height(60.dp)
         ) {
-            Text(text = "Read from Firebase", fontSize = 18.sp)
+            Text(text = "See Database", fontSize = 18.sp, fontFamily = spacefamily, fontWeight = FontWeight.Bold)
         }
 
         }
@@ -204,18 +219,99 @@ fun firebaseUI(context: android.content.Context, navController: NavController? =
 
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReadScreen(navController: NavController) {
-    val rememberScrollState = rememberScrollState()
+
     Column(
         modifier = Modifier
-            .verticalScroll(rememberScrollState)
             .fillMaxSize()
-            .padding(vertical = 48.dp, horizontal = 32.dp)
+            .padding(vertical = 5.dp, horizontal = 25.dp)
             .fillMaxWidth()
             .background(Color.White)
     ) {
-        for (user in userList) {
+        IconButton(onClick = {
+            navController.navigate("home")
+        },
+            modifier = Modifier.wrapContentSize().align(Alignment.Start)
+        ) {
+            Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back",
+                tint = Color.Black,
+                modifier = Modifier
+                    .padding(0.dp)
+                    .align(Alignment.Start)
+            )
+        }
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+        ){
+            itemsIndexed(userList){ index, item ->
+
+                Card(onClick = { /*TODO*/ },
+                    /*elevation = CardDefaults.cardElevation(
+                        defaultElevation = 5.dp
+                    ),*/
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 10.dp)
+                ) {
+
+                    val rememberScrollState = rememberScrollState()
+
+                    Column(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .wrapContentHeight()
+                    ) {
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        userList[index]?.name?.let {
+                            Text(text = it,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(4.dp)
+                                    .align(Alignment.CenterHorizontally),
+                                fontFamily = spacefamily,
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        userList[index]?.branch?.let {
+                            Text(text = it,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(4.dp)
+                                    .align(Alignment.CenterHorizontally),
+                                fontFamily = spacefamily,
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+                        userList[index]?.skill?.let {
+                            Text(text = it,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(4.dp)
+                                    .align(Alignment.CenterHorizontally),
+                                fontFamily = spacefamily,
+                            )
+                        }
+                    }
+
+                }
+            }
+        }
+
+        /*for (user in userList) {
             Text(text = "Name: ${user?.name}",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
@@ -238,7 +334,7 @@ fun ReadScreen(navController: NavController) {
                     .align(Alignment.CenterHorizontally)
                     .padding(bottom = 32.dp),
             )
-        }
+        }*/
 
     }
 }
