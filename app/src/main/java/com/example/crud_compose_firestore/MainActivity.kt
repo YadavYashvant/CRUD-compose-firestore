@@ -31,6 +31,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ColorScheme
@@ -86,7 +87,6 @@ val spacefamily = FontFamily(
 
 class MainActivity : ComponentActivity() {
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 override fun onCreate(savedInstanceState: Bundle?) {
@@ -129,6 +129,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
                             composable("read") {
 
                                 ReadScreen(navController = navController)
+
                             }
                         }
                     }
@@ -224,7 +225,8 @@ fun firebaseUI(context:Context, navController: NavController? = null) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 32.dp, horizontal = 32.dp)
-                .height(70.dp)
+                .height(70.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
         ) {
             Text(
                 text = "Add User",
@@ -300,7 +302,8 @@ fun ReadScreen(navController: NavController) {
             },
             modifier = Modifier
                 .wrapContentSize()
-                .align(Alignment.Start)
+                .align(Alignment.Start),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
         ) {
             Icon(
                 imageVector = Icons.Filled.ArrowBack, contentDescription = "Back",
