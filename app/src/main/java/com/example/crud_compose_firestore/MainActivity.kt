@@ -64,6 +64,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -253,6 +254,31 @@ fun firebaseUI(context:Context, navController: NavController? = null) {
             )
         }
 
+
+
+        /*val openDialog = remember { mutableStateOf(false) }
+
+        OutlinedButton(
+
+            onClick = {
+                      Dialog()
+                *//*deleteFromFirebase(
+                userList[index]?.toString()!!,
+            )
+            userList.removeAt(index)*//*
+            },
+            modifier = Modifier.wrapContentSize().align(Alignment.CenterHorizontally),
+
+            )
+
+        {
+            Icon(
+                imageVector = Icons.Filled.Delete,
+                contentDescription = "delete",
+                tint = Color.Red
+            )
+        }*/
+
     }
 }
 
@@ -264,7 +290,7 @@ fun ReadScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 0.dp, start = 16.dp, end = 16.dp)
+            .padding(top = 0.dp, start = 20.dp, end = 20.dp)
             .fillMaxWidth()
             /*.background(Color.White)*/
     ) {
@@ -293,7 +319,7 @@ fun ReadScreen(navController: NavController) {
                 OutlinedCard(
                     onClick = { /*TODO*/ },
                     elevation = CardDefaults.cardElevation(
-                    defaultElevation = 5.dp
+                    defaultElevation = 1.dp
                 ),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -325,26 +351,6 @@ fun ReadScreen(navController: NavController) {
                                         .padding(4.dp),
                                     fontFamily = spacefamily,
                                 )
-                                var isClicked by remember {
-                                    mutableStateOf(false)
-                                }
-                                OutlinedButton(onClick = {
-                                    deleteFromFirebase(
-                                        userList[index]?.toString()!!,
-                                    )
-                                    userList.removeAt(index)
-                                },
-                                    modifier = Modifier.wrapContentSize(),
-
-                                )
-
-                                {
-                                    Icon(
-                                        imageVector = Icons.Filled.Delete,
-                                        contentDescription = "delete",
-                                        tint = Color.Red
-                                    )
-                                }
                             }
                         }
                         Spacer(modifier = Modifier.height(8.dp))
@@ -375,6 +381,7 @@ fun ReadScreen(navController: NavController) {
                                 fontFamily = spacefamily,
                             )
                         }
+                        com.example.crud_compose_firestore.presentation.ui.Dialog()
                     }
 
                 }
