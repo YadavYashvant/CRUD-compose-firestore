@@ -27,11 +27,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.crud_compose_firestore.R
+import com.example.crud_compose_firestore.deleteFromFirebase
 import com.example.crud_compose_firestore.presentation.models.User
 import com.example.crud_compose_firestore.readFromFirebase
 
@@ -43,7 +45,7 @@ val spacefamily = FontFamily(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Dialog(index: Int, userList: MutableList<User?>, context: Context) {
+fun Dialog(index: Int, userList: MutableList<User?>, context: Context/*, deletedoc: String*/) {
 
     val openDialog = remember { mutableStateOf(false) }
 
@@ -53,6 +55,7 @@ fun Dialog(index: Int, userList: MutableList<User?>, context: Context) {
         modifier = Modifier
             .wrapContentWidth()
             .wrapContentHeight()
+            .padding(8.dp)
     ) {
         Icon(imageVector = Icons.Outlined.Delete, contentDescription = "exiting app")
     }
@@ -79,6 +82,7 @@ fun Dialog(index: Int, userList: MutableList<User?>, context: Context) {
                         userList.removeAt(index)
                         openDialog.value = false
                         Toast.makeText(context, "Card successfully deleted", Toast.LENGTH_SHORT).show()
+                        /*deleteFromFirebase(deletedoc)*/
                     },
                     Modifier.height(60.dp),
                     shape = MaterialTheme.shapes.medium,
