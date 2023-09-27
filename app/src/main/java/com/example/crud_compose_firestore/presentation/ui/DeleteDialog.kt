@@ -1,6 +1,8 @@
 package com.example.crud_compose_firestore.presentation.ui
 
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -30,6 +32,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.crud_compose_firestore.R
+import com.example.crud_compose_firestore.presentation.models.User
+import com.example.crud_compose_firestore.readFromFirebase
 
 
 val spacefamily = FontFamily(
@@ -39,7 +43,7 @@ val spacefamily = FontFamily(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Dialog() {
+fun Dialog(index: Int, userList: MutableList<User?>, context: Context) {
 
     val openDialog = remember { mutableStateOf(false) }
 
@@ -72,7 +76,9 @@ fun Dialog() {
             confirmButton = {
                 TextButton(
                     onClick = {
+                        userList.removeAt(index)
                         openDialog.value = false
+                        Toast.makeText(context, "Card successfully deleted", Toast.LENGTH_SHORT).show()
                     },
                     Modifier.height(60.dp),
                     shape = MaterialTheme.shapes.medium,

@@ -354,6 +354,19 @@ fun ReadScreen(navController: NavController) {
                                         .padding(4.dp),
                                     fontFamily = spacefamily,
                                 )
+
+                                /*var opendeletedialog by remember {
+                                    mutableStateOf(false)
+                                }
+
+                                IconButton(onClick = {
+                                    opendeletedialog = true
+                                }) {
+                                    if(opendeletedialog) {
+                                        com.example.crud_compose_firestore.presentation.ui.Dialog(index, userList)
+                                    }
+                                    Icon(imageVector = Icons.Filled.Delete, contentDescription = null)
+                                }*/
                             }
                         }
                         Spacer(modifier = Modifier.height(8.dp))
@@ -384,7 +397,10 @@ fun ReadScreen(navController: NavController) {
                                 fontFamily = spacefamily,
                             )
                         }
-                        com.example.crud_compose_firestore.presentation.ui.Dialog()
+
+                        com.example.crud_compose_firestore.presentation.ui.Dialog(index, userList, LocalContext.current)
+
+
                     }
 
                 }
